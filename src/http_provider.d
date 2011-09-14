@@ -11,8 +11,6 @@
 typedef struct { int dummy; } dthttp_t;
 typedef struct { int dummy; } conninfo_t;
 typedef struct { int dummy; } http_rqinfo_t;
-translator conninfo_t <dthttp_t *dp> { dummy = 0; };
-translator http_rqinfo_t <dthttp_t *dp> { dummy = 0; };
 
 /*
  * We follow existing conventions for DTrace providers in the names of probes
@@ -27,9 +25,9 @@ translator http_rqinfo_t <dthttp_t *dp> { dummy = 0; };
  *		arg1: http_rqinfo_t	(see http_provider_impl.h)
  */
 provider http {
-	probe request__start(dthttp_t *p) : (conninfo_t *, http_rqinfo_t *);
-	probe request__done(dthttp_t *p) : (conninfo_t *, http_rqinfo_t *);
-}
+	probe request__start(dthttp_t *p) : (conninfo_t *p, http_rqinfo_t *p);
+	probe request__done(dthttp_t *p) : (conninfo_t *p, http_rqinfo_t *p);
+};
 
 #pragma D attributes Evolving/Evolving/ISA	provider http provider
 #pragma D attributes Private/Private/Unknown	provider http module
