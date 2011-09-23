@@ -52,16 +52,25 @@ typedef struct {
 	string 		rq_agent;	/* user agent string */
 } httpd_rqinfo_t;
 
+/*
+ * The input structures are laid out so that fixed-width fields are at the
+ * front to simplify the following translators.  That's why we don't bother
+ * checking curpsinfo->pr_dmodel for these fields.
+ */
 #pragma D binding "1.6.1" translator
 translator conninfo_t <dthttpd_t *dp> {
-	ci_local = copyinstr(
-		(uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+	ci_local = curpsinfo->pr_dmodel == PR_MODEL_ILP32 ?
+		copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
 		    (uintptr_t)&((dthttpd32_t *)dp)->dt_laddr,
-		    sizeof (((dthttpd32_t *)dp)->dt_laddr))));
-	ci_remote = copyinstr(
-		(uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+		    sizeof (((dthttpd32_t *)dp)->dt_laddr)))) :
+		copyinstr(*(uintptr_t *)copyin(
+		    (uintptr_t)&dp->dt_laddr, sizeof (uint64_t)));
+	ci_remote = curpsinfo->pr_dmodel == PR_MODEL_ILP32 ?
+		copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
 		    (uintptr_t)&((dthttpd32_t *)dp)->dt_raddr,
-		    sizeof (((dthttpd32_t *)dp)->dt_raddr))));
+		    sizeof (((dthttpd32_t *)dp)->dt_raddr)))) :
+		copyinstr(*(uintptr_t *)copyin(
+		    (uintptr_t)&dp->dt_raddr, sizeof (uint64_t)));
 	ci_protocol = "ipv4";
 };
 
@@ -76,13 +85,22 @@ translator httpd_rqinfo_t <dthttpd_t *dp>
 	    sizeof (dp->dt_lport));
 	rq_rport = *(uint16_t *)copyin((uintptr_t)&dp->dt_rport,
 	    sizeof (dp->dt_rport));
-	rq_method = copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+	rq_method = curpsinfo->pr_dmodel == PR_MODEL_ILP32 ?
+		copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
 		    (uintptr_t)&((dthttpd32_t *)dp)->dt_method,
-		    sizeof (uint32_t))));
-	rq_uri = copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+		    sizeof (uint32_t)))) :
+		copyinstr(*(uintptr_t *)copyin(
+		    (uintptr_t)&dp->dt_method, sizeof (uint64_t)));
+	rq_uri = curpsinfo->pr_dmodel == PR_MODEL_ILP32 ?
+		copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
 		    (uintptr_t)&((dthttpd32_t *)dp)->dt_uri,
-		    sizeof (uint32_t))));
-	rq_agent = copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+		    sizeof (uint32_t)))) :
+		copyinstr(*(uintptr_t *)copyin(
+		    (uintptr_t)&dp->dt_uri, sizeof (uint64_t)));
+	rq_agent = curpsinfo->pr_dmodel == PR_MODEL_ILP32 ?
+		copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
 		    (uintptr_t)&((dthttpd32_t *)dp)->dt_agent,
-		    sizeof (uint32_t))));
+		    sizeof (uint32_t)))) :
+		copyinstr(*(uintptr_t *)copyin(
+		    (uintptr_t)&dp->dt_agent, sizeof (uint64_t)));
 };

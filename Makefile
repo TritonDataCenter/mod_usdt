@@ -7,10 +7,11 @@ MODNAME		 = usdt
 # DTrace provider name
 PROVIDER	 = httpd
 
-# Compile flags
+# Uncomment for 64-bit build
+CARCHFLAGS	+= -m64
 CC		 = gcc
 CSTYLE		 = tools/cstyle
-CFLAGS		+= -Wall -Werror
+CFLAGS		+= -Wall -Werror -fPIC $(CARCHFLAGS)
 CPPFLAGS	+= -I$(BUILD)
 AP_CPPFLAGS	:= $(shell apxs -q CPPFLAGS) -I$(shell apxs -q INCLUDEDIR)
 SOLDFLAGS	 = -shared -fPIC
