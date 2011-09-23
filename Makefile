@@ -5,10 +5,11 @@ BUILD		 = build
 MODNAME		 = dtprovider
 
 # DTrace provider name
-PROVIDER	 = http
+PROVIDER	 = httpd
 
 # Compile flags
 CC		 = gcc
+CSTYLE		 = tools/cstyle
 CFLAGS		+= -Wall -Werror
 CPPFLAGS	+= -I$(BUILD)
 AP_CPPFLAGS	:= $(shell apxs -q CPPFLAGS) -I$(shell apxs -q INCLUDEDIR)
@@ -24,6 +25,9 @@ all: $(SOFILE)
 
 clean:
 	-rm -rf $(BUILD)
+
+check: $(CSRCS:%=%.cstyle)
+	@echo check okay
 
 $(BUILD):
 	mkdir -p $(BUILD)
@@ -59,3 +63,6 @@ $(BUILD)/$(PROVIDER)_provider.o: src/$(PROVIDER)_provider.d $(OBJFILES) | $(BUIL
 #
 $(BUILD)/$(PROVIDER)_provider.h: src/$(PROVIDER)_provider.d | $(BUILD)
 	dtrace -xnolibs -h -o $@ -s $<
+
+%.c.cstyle: %.c
+	$(CSTYLE) $<

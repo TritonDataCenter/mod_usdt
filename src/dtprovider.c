@@ -1,5 +1,5 @@
 /*
- * dtprovider.c: Apache module implementing a DTrace "http" provider
+ * dtprovider.c: Apache module implementing a DTrace "httpd" provider
  */
 
 #include <strings.h>
@@ -9,8 +9,8 @@
 #include <http_config.h>
 #include <apr_tables.h>
 
-#include "http_provider_impl.h"
-#include <http_provider.h>
+#include "httpd_provider_impl.h"
+#include <httpd_provider.h>
 
 static void dtp_register_hooks(apr_pool_t *);
 static int dtp_request_start(request_rec *);
@@ -36,7 +36,7 @@ dtp_register_hooks(apr_pool_t *pool)
 }
 
 static void
-dtp_request_fill(dthttp_t *infop, request_rec *rqp)
+dtp_request_fill(dthttpd_t *infop, request_rec *rqp)
 {
 	bzero(infop, sizeof (*infop));
 	infop->dt_version = DT_VERS;
@@ -53,27 +53,27 @@ dtp_request_fill(dthttp_t *infop, request_rec *rqp)
 static int
 dtp_request_start(request_rec *rqp)
 {
-	dthttp_t info;
+	dthttpd_t info;
 
-	if (!HTTP_REQUEST_START_ENABLED())
+	if (!HTTPD_REQUEST_START_ENABLED())
 		return (OK);
 
 	dtp_request_fill(&info, rqp);
-	HTTP_REQUEST_START(&info);
+	HTTPD_REQUEST_START(&info);
 	return (OK);
 }
 
 static int
 dtp_request_done(request_rec *rqp)
 {
-	dthttp_t info;
+	dthttpd_t info;
 
-	if (!HTTP_REQUEST_DONE_ENABLED())
+	if (!HTTPD_REQUEST_DONE_ENABLED())
 		return (OK);
 
 	dtp_request_fill(&info, rqp);
 	info.dt_status = rqp->status;
 
-	HTTP_REQUEST_DONE(&info);
+	HTTPD_REQUEST_DONE(&info);
 	return (OK);
 }

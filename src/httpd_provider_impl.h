@@ -1,5 +1,5 @@
 /*
- * http_provider_impl.h: implementation-specific header file for HTTP provider
+ * httpd_provider_impl.h: implementation-specific header file for HTTP provider
  */
 
 /*
@@ -19,7 +19,7 @@ typedef struct {
 	const char	*dt_method;	/* requested HTTP method */
 	const char	*dt_uri;	/* requested URI */
 	const char	*dt_agent;	/* user agent header */
-} dthttp_t;
+} dthttpd_t;
 
 #define	DT_VERS_1	1
 #define	DT_VERS		DT_VERS_1

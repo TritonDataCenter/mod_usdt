@@ -1,14 +1,14 @@
 /*
- * http.d: DTrace library for translating arguments from the Apache DTrace provider
+ * httpd.d: DTrace library for translating arguments from the httpd provider
  */
 
 #pragma D depends_on library net.d
 #pragma D depends_on library procfs.d
 
 /*
- * The Apache module passes us a dthttp_t structure from which we construct the
- * conninfo_t and http_rqinfo_t structures that get passed into DTrace probes.
- * We must redefine the dthttp_t structure here and it must exactly match that
+ * The Apache module passes us a dthttpd_t structure from which we construct the
+ * conninfo_t and httpd_rqinfo_t structures that get passed into DTrace probes.
+ * We must redefine the dthttpd_t structure here and it must exactly match that
  * used by Apache.
  */
 typedef struct {
@@ -22,7 +22,7 @@ typedef struct {
 	uint64_t	dt_method;	/* requested HTTP method */
 	uint64_t	dt_uri;		/* requested URI */
 	uint64_t	dt_agent;	/* user agent header */
-} dthttp_t;
+} dthttpd_t;
 
 typedef struct {
 	uint16_t	dt_version;	/* structure version number */
@@ -35,7 +35,7 @@ typedef struct {
 	uint32_t	dt_method;	/* requested HTTP method */
 	uint32_t	dt_uri;		/* requested URI */
 	uint32_t	dt_agent;	/* user agent header */
-} dthttp32_t;
+} dthttpd32_t;
 
 inline int DT_VERS_1 = 1;
 inline int DT_VERS = DT_VERS_1;
@@ -51,23 +51,23 @@ typedef struct {
 	string		rq_method;	/* requested method */
 	string 		rq_uri;		/* requested URI */
 	string 		rq_agent;	/* user agent string */
-} http_rqinfo_t;
+} httpd_rqinfo_t;
 
 #pragma D binding "1.6.1" translator
-translator conninfo_t <dthttp_t *dp> {
+translator conninfo_t <dthttpd_t *dp> {
 	ci_local = copyinstr(
 		(uintptr_t)(uint64_t)(*(uint32_t *)copyin(
-		    (uintptr_t)&((dthttp32_t *)dp)->dt_laddr,
-		    sizeof (((dthttp32_t *)dp)->dt_laddr))));
+		    (uintptr_t)&((dthttpd32_t *)dp)->dt_laddr,
+		    sizeof (((dthttpd32_t *)dp)->dt_laddr))));
 	ci_remote = copyinstr(
 		(uintptr_t)(uint64_t)(*(uint32_t *)copyin(
-		    (uintptr_t)&((dthttp32_t *)dp)->dt_raddr,
-		    sizeof (((dthttp32_t *)dp)->dt_raddr))));
+		    (uintptr_t)&((dthttpd32_t *)dp)->dt_raddr,
+		    sizeof (((dthttpd32_t *)dp)->dt_raddr))));
 	ci_protocol = "ipv4";
 };
 
 #pragma D binding "1.6.1" translator
-translator http_rqinfo_t <dthttp_t *dp>
+translator httpd_rqinfo_t <dthttpd_t *dp>
 {
 	rq_id = *(uint64_t *)copyin((uintptr_t)&dp->dt_rqid,
 	    sizeof (dp->dt_rqid));
@@ -78,12 +78,12 @@ translator http_rqinfo_t <dthttp_t *dp>
 	rq_rport = *(uint16_t *)copyin((uintptr_t)&dp->dt_rport,
 	    sizeof (dp->dt_rport));
 	rq_method = copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
-		    (uintptr_t)&((dthttp32_t *)dp)->dt_method,
+		    (uintptr_t)&((dthttpd32_t *)dp)->dt_method,
 		    sizeof (uint32_t))));
 	rq_uri = copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
-		    (uintptr_t)&((dthttp32_t *)dp)->dt_uri,
+		    (uintptr_t)&((dthttpd32_t *)dp)->dt_uri,
 		    sizeof (uint32_t))));
 	rq_agent = copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
-		    (uintptr_t)&((dthttp32_t *)dp)->dt_agent,
+		    (uintptr_t)&((dthttpd32_t *)dp)->dt_agent,
 		    sizeof (uint32_t))));
 };
