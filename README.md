@@ -44,7 +44,8 @@ Instructions
 ------------
 
 First, build the Apache module.  You'll need a C compiler and the Apache
-headers available in some standard location.  Then run:
+headers available in some standard location.  If you want to build 64-bit,
+first uncomment the appropriate line in the Makefile first.  Then run:
 
     # make
 
