@@ -70,6 +70,45 @@ it constructs the appropriate arguments and fires the probe.  The module thus
 has minimal overhead whether the DTrace probes are enabled or not.
 
 
+Provider details
+----------------
+
+This provider defines the following probes:
+
+* `httpd$pid:::request-start`: request received
+* `httpd$pid:::request-start`: request completed (response sent)
+
+Both probes are passed two arguments:
+
+* `arg0` (`conninfo_t`): IP connection details
+* `arg1` (`httpd_rqinfo_t`): HTTP request details
+
+The `conninfo_t` is the same one used by the NFS, iSCSI, and various other
+network protocol providers, included here for reference from
+/usr/lib/dtrace/net.d:
+
+    typedef struct conninfo {
+    	string ci_local;	/* local host address */
+    	string ci_remote;	/* remote host address */
+    	string ci_protocol;	/* protocol (ipv4, ipv6, etc) */
+    } conninfo_t;
+
+The `httpd_rqinfo_t` structure looks like this:
+
+    typedef struct {
+    	uint64_t	rq_id;		/* unique request identifier */
+    	uint16_t	rq_status;	/* status code (only on "done" probe) */
+    	uint16_t	rq_lport;	/* local TCP port */
+    	uint16_t	rq_rport;	/* remote TCP port */
+    	string		rq_method;	/* requested method */
+    	string 		rq_uri;		/* requested URI */
+    	string 		rq_agent;	/* user agent string */
+    } httpd_rqinfo_t;
+
+See the source of the example scripts above to see how these structures can be
+used.
+
+
 Status
 -----
 
