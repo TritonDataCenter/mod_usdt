@@ -1,5 +1,5 @@
 /*
- * dtprovider.c: Apache module implementing a DTrace "httpd" provider
+ * usdt.c: Apache module implementing a DTrace "httpd" provider
  */
 
 #include <strings.h>
@@ -16,7 +16,7 @@ static void dtp_register_hooks(apr_pool_t *);
 static int dtp_request_start(request_rec *);
 static int dtp_request_done(request_rec *);
 
-module AP_MODULE_DECLARE_DATA dtprovider_module = {
+module AP_MODULE_DECLARE_DATA usdt_module = {
 	STANDARD20_MODULE_STUFF,
 	NULL,				/* per-directory conf */
 	NULL,				/* merge */

@@ -1,7 +1,7 @@
-mod_dtprovider
+mod_usdt
 ==============
 
-mod_dtprovider is an Apache2 module that implements an "httpd" DTrace provider,
+mod_usdt is an Apache2 module that implements an "httpd" DTrace provider,
 allowing you to trace Apache requests using DTrace.  DTrace is a comprehensive
 dynamic tracing framework available on Illumos, BSD, and MacOS, systems.  For
 more information about DTrace, see http://en.wikipedia.org/wiki/DTrace.
@@ -50,13 +50,13 @@ headers available in some standard location.  Then run:
 
 To install:
 
-1. (optional) Copy build/mod_dtprovider.so to wherever you keep your Apache
-   module binaries.
+1. (optional) Copy build/mod_usdt.so to wherever you keep your Apache module
+   binaries.
 
 2. Modify the Apache configuration to include the new module by adding this
    line (specifing the appropriate path):
 
-    LoadModule dtprovider_module path/to/mod_dtprovider.so
+    LoadModule usdt_module path/to/mod_usdt.so
 
 3. Restart Apache.
 

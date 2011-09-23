@@ -2,7 +2,7 @@
 BUILD		 = build
 
 # Apache module name
-MODNAME		 = dtprovider
+MODNAME		 = usdt
 
 # DTrace provider name
 PROVIDER	 = httpd
