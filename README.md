@@ -9,4 +9,5 @@ http://en.wikipedia.org/wiki/DTrace.
 
 Status
 -----
-This module is (obviously) not yet even remotely functional.
+This module is functional on 32-bit Apache, but incomplete.  The interface is
+unstable.  Future versions will include examples and sample DTrace scripts.

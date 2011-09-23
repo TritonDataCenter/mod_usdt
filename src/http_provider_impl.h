@@ -10,16 +10,15 @@
  */
 typedef struct {
 	uint16_t	dt_version;	/* structure version number */
+	uint16_t	dt_status;	/* status code (only on "done" probe) */
+	uint16_t	dt_lport;	/* local TCP port */
+	uint16_t	dt_rport;	/* remote TCP port */
 	uint64_t	dt_rqid;	/* unique request identifier */
 	const char	*dt_laddr;	/* local IP address (as string) */
-	uint16_t	dt_lport;	/* local TCP port */
 	const char	*dt_raddr;	/* remote IP address (as string) */
-	uint16_t	dt_rport;	/* remote TCP port */
-	uint64_t  	dt_bytesin;	/* bytes received from client */
 	const char	*dt_method;	/* requested HTTP method */
 	const char	*dt_uri;	/* requested URI */
 	const char	*dt_agent;	/* user agent header */
-	const char	*dt_origin;	/* reported origin IP */
 } dthttp_t;
 
 #define	DT_VERS_1	1

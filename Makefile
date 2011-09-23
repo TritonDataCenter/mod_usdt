@@ -9,7 +9,8 @@ PROVIDER	 = http
 
 # Compile flags
 CC		 = gcc
-CFLAGS		+= -Wall
+CFLAGS		+= -Wall -Werror
+CPPFLAGS	+= -I$(BUILD)
 AP_CPPFLAGS	:= $(shell apxs -q CPPFLAGS) -I$(shell apxs -q INCLUDEDIR)
 SOLDFLAGS	 = -shared -fPIC
 
@@ -47,6 +48,8 @@ $(SOFILE): $(OBJFILES) $(EXTRAOBJFILES)
 #
 $(BUILD)/%.o: src/%.c | $(BUILD)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(AP_CPPFLAGS) -c -o $@ $<
+
+$(BUILD)/$(MODNAME).o: $(BUILD)/$(PROVIDER)_provider.h
 
 $(BUILD)/$(PROVIDER)_provider.o: src/$(PROVIDER)_provider.d $(OBJFILES) | $(BUILD)
 	dtrace -xnolibs -G -o $@ -s $< $(OBJFILES)

@@ -3,6 +3,7 @@
  */
 
 #pragma D depends_on library net.d
+#pragma D depends_on library procfs.d
 
 /*
  * The Apache module passes us a dthttp_t structure from which we construct the
@@ -12,47 +13,77 @@
  */
 typedef struct {
 	uint16_t	dt_version;	/* structure version number */
-	uint64_t	dt_rqid;	/* unique request identifier */
-	const char	*dt_laddr;	/* local IP address (as string) */
+	uint16_t	dt_status;	/* status code (only on "done" probe) */
 	uint16_t	dt_lport;	/* local TCP port */
-	const char	*dt_raddr;	/* remote IP address (as string) */
 	uint16_t	dt_rport;	/* remote TCP port */
-	uint64_t  	dt_bytesin;	/* bytes received from client */
-	const char	*dt_method;	/* requested HTTP method */
-	const char	*dt_uri;	/* requested URI */
-	const char	*dt_agent;	/* user agent header */
-	const char	*dt_origin;	/* reported origin IP */
+	uint64_t	dt_rqid;	/* unique request identifier */
+	uint64_t	dt_laddr;	/* local IP address (as string) */
+	uint64_t	dt_raddr;	/* remote IP address (as string) */
+	uint64_t	dt_method;	/* requested HTTP method */
+	uint64_t	dt_uri;		/* requested URI */
+	uint64_t	dt_agent;	/* user agent header */
 } dthttp_t;
 
-#define	DT_VERS_1	1
-#define	DT_VERS		DT_VERS_1
+typedef struct {
+	uint16_t	dt_version;	/* structure version number */
+	uint16_t	dt_status;	/* status code (only on "done" probe) */
+	uint16_t	dt_lport;	/* local TCP port */
+	uint16_t	dt_rport;	/* remote TCP port */
+	uint64_t	dt_rqid;	/* unique request identifier */
+	uint32_t	dt_laddr;	/* local IP address (as string) */
+	uint32_t	dt_raddr;	/* remote IP address (as string) */
+	uint32_t	dt_method;	/* requested HTTP method */
+	uint32_t	dt_uri;		/* requested URI */
+	uint32_t	dt_agent;	/* user agent header */
+} dthttp32_t;
+
+inline int DT_VERS_1 = 1;
+inline int DT_VERS = DT_VERS_1;
 
 /*
  * This is the structure that's actually provided to DTrace probe consumers.
  */
 typedef struct {
 	uint64_t	rq_id;		/* unique request identifier */
-	uint64_t	rq_bytesin;	/* bytes received from client */
+	uint16_t	rq_status;	/* status code (only on "done" probe) */
+	uint16_t	rq_lport;	/* local TCP port */
+	uint16_t	rq_rport;	/* remote TCP port */
 	string		rq_method;	/* requested method */
 	string 		rq_uri;		/* requested URI */
-	string 		rq_useragent;	/* user agent string */
-	string 		rq_origin;	/* reported origin */
+	string 		rq_agent;	/* user agent string */
 } http_rqinfo_t;
 
 #pragma D binding "1.6.1" translator
 translator conninfo_t <dthttp_t *dp> {
-	ci_local = "<unknown>";
-	ci_remote = "<unknown>";
-	ci_protocol = "<unknown>";
+	ci_local = copyinstr(
+		(uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+		    (uintptr_t)&((dthttp32_t *)dp)->dt_laddr,
+		    sizeof (((dthttp32_t *)dp)->dt_laddr))));
+	ci_remote = copyinstr(
+		(uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+		    (uintptr_t)&((dthttp32_t *)dp)->dt_raddr,
+		    sizeof (((dthttp32_t *)dp)->dt_raddr))));
+	ci_protocol = "ipv4";
 };
 
 #pragma D binding "1.6.1" translator
 translator http_rqinfo_t <dthttp_t *dp>
 {
-	rq_id = (uint64_t)dp;
-	rq_bytesin = 0;
-	rq_method = "<unknown>";
-	rq_uri = "<unknown>";
-	rq_useragent = "<unknown>";
-	rq_origin = "<unknown>";
+	rq_id = *(uint64_t *)copyin((uintptr_t)&dp->dt_rqid,
+	    sizeof (dp->dt_rqid));
+	rq_status = *(uint16_t *)copyin((uintptr_t)&dp->dt_status,
+	    sizeof (dp->dt_status));
+	rq_lport = *(uint16_t *)copyin((uintptr_t)&dp->dt_lport,
+	    sizeof (dp->dt_lport));
+	rq_rport = *(uint16_t *)copyin((uintptr_t)&dp->dt_rport,
+	    sizeof (dp->dt_rport));
+	rq_method = copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+		    (uintptr_t)&((dthttp32_t *)dp)->dt_method,
+		    sizeof (uint32_t))));
+	rq_uri = copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+		    (uintptr_t)&((dthttp32_t *)dp)->dt_uri,
+		    sizeof (uint32_t))));
+	rq_agent = copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
+		    (uintptr_t)&((dthttp32_t *)dp)->dt_agent,
+		    sizeof (uint32_t))));
 };

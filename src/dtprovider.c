@@ -2,9 +2,15 @@
  * dtprovider.c: Apache module implementing a DTrace "http" provider
  */
 
+#include <strings.h>
+
 #include <httpd.h>
 #include <http_protocol.h>
 #include <http_config.h>
+#include <apr_tables.h>
+
+#include "http_provider_impl.h"
+#include <http_provider.h>
 
 static void dtp_register_hooks(apr_pool_t *);
 static int dtp_request_start(request_rec *);
@@ -29,14 +35,45 @@ dtp_register_hooks(apr_pool_t *pool)
 	    APR_HOOK_LAST);
 }
 
+static void
+dtp_request_fill(dthttp_t *infop, request_rec *rqp)
+{
+	bzero(infop, sizeof (*infop));
+	infop->dt_version = DT_VERS;
+	infop->dt_rqid = (uint64_t)(uintptr_t)rqp;
+	infop->dt_laddr = rqp->connection->local_ip;
+	infop->dt_lport = rqp->connection->local_addr->port;
+	infop->dt_raddr = rqp->connection->remote_ip;
+	infop->dt_rport = rqp->connection->remote_addr->port;
+	infop->dt_method = rqp->method;
+	infop->dt_uri = rqp->uri;
+	infop->dt_agent = apr_table_get(rqp->headers_in, "user-agent");
+}
+
 static int
 dtp_request_start(request_rec *rqp)
 {
-	return (DECLINED);
+	dthttp_t info;
+
+	if (!HTTP_REQUEST_START_ENABLED())
+		return (OK);
+
+	dtp_request_fill(&info, rqp);
+	HTTP_REQUEST_START(&info);
+	return (OK);
 }
 
 static int
 dtp_request_done(request_rec *rqp)
 {
-	return (DECLINED);
+	dthttp_t info;
+
+	if (!HTTP_REQUEST_DONE_ENABLED())
+		return (OK);
+
+	dtp_request_fill(&info, rqp);
+	info.dt_status = rqp->status;
+
+	HTTP_REQUEST_DONE(&info);
+	return (OK);
 }
