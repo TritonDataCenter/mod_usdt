@@ -3,8 +3,8 @@ mod_usdt
 
 mod_usdt is an Apache2 module that implements an "httpd" DTrace provider,
 allowing you to trace Apache requests using DTrace.  DTrace is a comprehensive
-dynamic tracing framework available on Illumos, BSD, and MacOS, systems.  For
-more information about DTrace, see http://en.wikipedia.org/wiki/DTrace.
+dynamic tracing framework available on Illumos-based, BSD, and MacOS systems.
+For more information about DTrace, see http://en.wikipedia.org/wiki/DTrace.
 
 
 Example
