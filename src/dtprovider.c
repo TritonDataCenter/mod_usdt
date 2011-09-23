@@ -39,7 +39,6 @@ static void
 dtp_request_fill(dthttpd_t *infop, request_rec *rqp)
 {
 	bzero(infop, sizeof (*infop));
-	infop->dt_version = DT_VERS;
 	infop->dt_rqid = (uint64_t)(uintptr_t)rqp;
 	infop->dt_laddr = rqp->connection->local_ip;
 	infop->dt_lport = rqp->connection->local_addr->port;

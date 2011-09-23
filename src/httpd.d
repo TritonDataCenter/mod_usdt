@@ -12,33 +12,32 @@
  * used by Apache.
  */
 typedef struct {
-	uint16_t	dt_version;	/* structure version number */
+	uint64_t	dt_rqid;	/* unique request identifier */
 	uint16_t	dt_status;	/* status code (only on "done" probe) */
 	uint16_t	dt_lport;	/* local TCP port */
 	uint16_t	dt_rport;	/* remote TCP port */
-	uint64_t	dt_rqid;	/* unique request identifier */
+	uint8_t		dt_pad1[34];	/* padding for fixed-length fields */
 	uint64_t	dt_laddr;	/* local IP address (as string) */
 	uint64_t	dt_raddr;	/* remote IP address (as string) */
 	uint64_t	dt_method;	/* requested HTTP method */
 	uint64_t	dt_uri;		/* requested URI */
 	uint64_t	dt_agent;	/* user agent header */
+	uint8_t		dt_pad2[32];	/* padding for word-size fields */
 } dthttpd_t;
 
 typedef struct {
-	uint16_t	dt_version;	/* structure version number */
+	uint64_t	dt_rqid;	/* unique request identifier */
 	uint16_t	dt_status;	/* status code (only on "done" probe) */
 	uint16_t	dt_lport;	/* local TCP port */
 	uint16_t	dt_rport;	/* remote TCP port */
-	uint64_t	dt_rqid;	/* unique request identifier */
+	uint8_t		dt_pad1[34];	/* padding for fixed-length fields */
 	uint32_t	dt_laddr;	/* local IP address (as string) */
 	uint32_t	dt_raddr;	/* remote IP address (as string) */
 	uint32_t	dt_method;	/* requested HTTP method */
 	uint32_t	dt_uri;		/* requested URI */
 	uint32_t	dt_agent;	/* user agent header */
+	uint8_t		dt_pad2[32];	/* padding for word-size fields */
 } dthttpd32_t;
-
-inline int DT_VERS_1 = 1;
-inline int DT_VERS = DT_VERS_1;
 
 /*
  * This is the structure that's actually provided to DTrace probe consumers.

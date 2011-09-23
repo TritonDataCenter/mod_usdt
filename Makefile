@@ -26,7 +26,7 @@ all: $(SOFILE)
 clean:
 	-rm -rf $(BUILD)
 
-check: $(CSRCS:%=%.cstyle)
+check: $(CSRCS:%=%.cstyle) src/$(PROVIDER)_provider_impl.h.cstyle
 	@echo check okay
 
 $(BUILD):
@@ -65,4 +65,7 @@ $(BUILD)/$(PROVIDER)_provider.h: src/$(PROVIDER)_provider.d | $(BUILD)
 	dtrace -xnolibs -h -o $@ -s $<
 
 %.c.cstyle: %.c
+	$(CSTYLE) $<
+
+%.h.cstyle: %.h
 	$(CSTYLE) $<
