@@ -8,7 +8,7 @@ MODNAME		 = usdt
 PROVIDER	 = httpd
 
 # Uncomment for 64-bit build
-CARCHFLAGS	+= -m64
+#CARCHFLAGS	+= -m64
 CC		 = gcc
 CSTYLE		 = tools/cstyle
 CFLAGS		+= -Wall -Werror -fPIC $(CARCHFLAGS)
