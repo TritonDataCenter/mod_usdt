@@ -14,6 +14,6 @@ httpd*:::request-start
 
 httpd*:::request-done
 {
-	@ = quantize(timestamp - self->start);
+	@["microseconds"] = quantize((timestamp - self->start) / 1000);
 	self->start = 0;
 }

@@ -24,17 +24,20 @@ Or, for busier services, summarize latency over time with a histogram:
     # dtrace -s examples/http-requests.d
     Tracing.  Hit CTRL-C to stop.
     ^C
-
-
+    
+    microseconds                                      
+    
            value  ------------- Distribution ------------- count    
-           65536 |                                         0        
-          131072 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@      872      
-          262144 |@@@@                                     92       
-          524288 |@                                        24       
-         1048576 |                                         8        
-         2097152 |                                         2        
-         4194304 |                                         2        
-         8388608 |                                         0        
+              64 |                                         0        
+             128 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       3367     
+             256 |@@@@@@                                   578      
+             512 |@                                        51       
+            1024 |                                         3        
+            2048 |                                         0        
+            4096 |                                         0        
+            8192 |                                         1        
+           16384 |                                         0        
+
 
 
 Instructions
