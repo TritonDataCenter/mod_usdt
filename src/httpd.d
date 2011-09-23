@@ -58,7 +58,7 @@ typedef struct {
  * checking curpsinfo->pr_dmodel for these fields.
  */
 #pragma D binding "1.6.1" translator
-translator conninfo_t <dthttpd_t *dp> {
+translator conninfo_t < dthttpd_t *dp > {
 	ci_local = curpsinfo->pr_dmodel == PR_MODEL_ILP32 ?
 		copyinstr((uintptr_t)(uint64_t)(*(uint32_t *)copyin(
 		    (uintptr_t)&((dthttpd32_t *)dp)->dt_laddr,
@@ -75,7 +75,7 @@ translator conninfo_t <dthttpd_t *dp> {
 };
 
 #pragma D binding "1.6.1" translator
-translator httpd_rqinfo_t <dthttpd_t *dp>
+translator httpd_rqinfo_t < dthttpd_t *dp >
 {
 	rq_id = *(uint64_t *)copyin((uintptr_t)&dp->dt_rqid,
 	    sizeof (dp->dt_rqid));

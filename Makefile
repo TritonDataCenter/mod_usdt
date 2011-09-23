@@ -18,6 +18,8 @@ SOLDFLAGS	 = -shared -fPIC
 
 # Source layout
 CSRCS		 = src/$(MODNAME).c
+CSSRCS		 = $(CSRCS) src/$(PROVIDER)_provider_impl.h
+CSSRCS		+= src/$(PROVIDER)_provider.d src/$(PROVIDER).d
 SOFILE		 = $(BUILD)/mod_$(MODNAME).so
 OBJFILES	 = $(CSRCS:src/%.c=$(BUILD)/%.o)
 EXTRAOBJFILES	 = $(BUILD)/$(PROVIDER)_provider.o
@@ -27,7 +29,7 @@ all: $(SOFILE)
 clean:
 	-rm -rf $(BUILD)
 
-check: $(CSRCS:%=%.cstyle) src/$(PROVIDER)_provider_impl.h.cstyle
+check: $(CSSRCS:%=%.cstyle)
 	@echo check okay
 
 $(BUILD):
@@ -69,4 +71,7 @@ $(BUILD)/$(PROVIDER)_provider.h: src/$(PROVIDER)_provider.d | $(BUILD)
 	$(CSTYLE) $<
 
 %.h.cstyle: %.h
+	$(CSTYLE) $<
+
+%.d.cstyle: %.d
 	$(CSTYLE) $<
