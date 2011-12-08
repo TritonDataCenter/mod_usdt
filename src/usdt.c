@@ -45,7 +45,7 @@ dtp_request_fill(dthttpd_t *infop, request_rec *rqp)
 	infop->dt_raddr = rqp->connection->remote_ip;
 	infop->dt_rport = rqp->connection->remote_addr->port;
 	infop->dt_method = rqp->method;
-	infop->dt_uri = rqp->uri;
+	infop->dt_uri = rqp->unparsed_uri;
 	infop->dt_agent = apr_table_get(rqp->headers_in, "user-agent");
 }
 
