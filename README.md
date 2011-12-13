@@ -21,7 +21,7 @@ completes them:
 
 Or, for busier services, summarize latency over time with a histogram:
 
-    # dtrace -s examples/http-requests.d
+    # dtrace -s examples/http-requests-bylatency.d
     Tracing.  Hit CTRL-C to stop.
     ^C
     
