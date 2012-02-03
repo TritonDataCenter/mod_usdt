@@ -61,9 +61,39 @@ To install:
 
 3. Restart Apache.
 
-4. Copy build/httpd.d into /usr/lib/dtrace.  You can skip this step, but then
+4. Copy src/httpd.d into /usr/lib/dtrace.  You can skip this step, but then
    every dtrace(1M) invocation must use "-L" to specify the path to the
    directory containing this file.
+
+4a Using Inside Zones: Due to the current OS limitation of accessing the value 
+   curpsinfo->pr_dmodel from within non-global zone; use the correct version of
+   httpd.d (32 or 64-bit): src/httpd-zone-32.d or arc/httpd-zone-64.d respectively.
+   Step #4 above applies.  
+
+4b An easy way to determine if the Apache is 32-bit or 64-bit is to execute the following in the global zone:
+   # dtrace -qn 'syscall::: /execname == "httpd"/ { ab = (curpsinfo->pr_dmodel == PR_MODEL_ILP32) ? "32-bit" : "64-bit" ; exit(0); } END { printf("Apache: %s",ab); }'
+   Apache: 32-bit
+
+4c Copy the right version and execute the examples to ensure it works in the non-global zone:
+   # zlogin zone-percona0
+   [root@zone-percona0 ~/]# cd ~/mod_usdt; mkdir trans32 
+   [root@zone-percona0 ~/mod_usdt]# cp src/httpd-zone-32.d trans32/. 
+   [root@zone-percona0 ~/mod_usdt]# dtrace -L trans32/ -s examples/http-requests-bylatency.d 
+   dtrace: aggregation size lowered to 64k
+   Tracing.  Hit CTRL-C to stop.
+   ^C
+
+   microseconds                                      
+           value  ------------- Distribution ------------- count    
+             512 |                                         0        
+            1024 |@@@@@@@@@@@@@@@@@@@@                     1        
+            2048 |                                         0        
+            4096 |                                         0        
+            8192 |@@@@@@@@@@@@@@@@@@@@                     1        
+           16384 |                                         0 
+       
+4c Full details by Dave Pacheco at:
+   https://www.listbox.com/member/archive/184261/2012/01/sort/time_rev/page/1/entry/0:5/20120117154842:A29D5E5A-414C-11E1-A2C5-B34EA897F121/
 
 The module is very simple: it registers hooks for the beginning and end of each
 request.  In each hook function, if the corresponding DTrace probe is enabled,
