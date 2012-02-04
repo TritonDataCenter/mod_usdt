@@ -72,19 +72,19 @@ To install:
 
 4b An easy way to determine if the Apache is 32-bit or 64-bit is to execute the following in the global zone:
 
-   # dtrace -qn 'syscall::: /execname == "httpd"/ { ab = (curpsinfo->pr_dmodel == PR_MODEL_ILP32) ? "32-bit" : "64-bit" ; exit(0); } END { printf("Apache: %s",ab); }'
-   Apache: 32-bit
+    # dtrace -qn 'syscall::: /execname == "httpd"/ { ab = (curpsinfo->pr_dmodel == PR_MODEL_ILP32) ? "32-bit" : "64-bit" ; exit(0); } END { printf("Apache: %s",ab); }'
+    Apache: 32-bit
 
 4c Copy the right version and execute the examples to ensure it works in the non-global zone:
 
-   # zlogin zone-percona0
-   [root@zone-percona0 ~/]# cd ~/mod_usdt; mkdir trans32 
-   [root@zone-percona0 ~/mod_usdt]# cp src/httpd-zone-32.d trans32/. 
-   [root@zone-percona0 ~/mod_usdt]# dtrace -L trans32/ -s examples/http-requests-bylatency.d 
-   dtrace: aggregation size lowered to 64k
-   Tracing.  Hit CTRL-C to stop.
-   ^C
-   microseconds                                      
+    # zlogin zone-percona0
+    [root@zone-percona0 ~/]# cd ~/mod_usdt; mkdir trans32 
+    [root@zone-percona0 ~/mod_usdt]# cp src/httpd-zone-32.d trans32/. 
+    [root@zone-percona0 ~/mod_usdt]# dtrace -L trans32/ -s examples/http-requests-bylatency.d 
+    dtrace: aggregation size lowered to 64k
+    Tracing.  Hit CTRL-C to stop.
+    ^C
+    microseconds                                      
            value  ------------- Distribution ------------- count    
              512 |                                         0        
             1024 |@@@@@@@@@@@@@@@@@@@@                     1        
