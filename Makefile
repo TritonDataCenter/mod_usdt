@@ -13,7 +13,8 @@ CC		 = gcc
 CSTYLE		 = tools/cstyle
 CFLAGS		+= -Wall -Werror -fPIC $(CARCHFLAGS)
 CPPFLAGS	+= -I$(BUILD)
-AP_CPPFLAGS	:= $(shell apxs -q CPPFLAGS) -I$(shell apxs -q INCLUDEDIR)
+AP_CPPFLAGS	:= $(shell apxs -q CPPFLAGS) \
+    -I$(shell apxs -q INCLUDEDIR) -I$(shell apr-1-config --includedir)
 SOLDFLAGS	 = -shared -fPIC
 
 # Source layout
