@@ -9,6 +9,20 @@
 #include <http_config.h>
 #include <apr_tables.h>
 
+/*
+ * Apache 2.4's attempted integration with DTrace broke all modules that were
+ * using DTrace by #undef'ing _DTRACE_VERSION, even if you're building with
+ * --enable-dtrace.  For that reason, we hardcode a #define of _DTRACE_VERSION
+ * here.  This is truly awful -- it should not be necessary, and it's not our
+ * business to assert what the system does or does not support, but we don't
+ * have a lot of choice.
+ */
+#if AP_MODULE_MAGIC_AT_LEAST(20111130,0)
+#ifndef _DTRACE_VERSION
+#define	_DTRACE_VERSION 3
+#endif
+#endif
+
 #include "httpd_provider_impl.h"
 #include <httpd_provider.h>
 
@@ -42,8 +56,13 @@ dtp_request_fill(dthttpd_t *infop, request_rec *rqp)
 	infop->dt_rqid = (uint64_t)(uintptr_t)rqp;
 	infop->dt_laddr = rqp->connection->local_ip;
 	infop->dt_lport = rqp->connection->local_addr->port;
+#if AP_MODULE_MAGIC_AT_LEAST(20111130,0)
+	infop->dt_raddr = rqp->connection->client_ip;
+	infop->dt_rport = rqp->connection->client_addr->port;
+#else
 	infop->dt_raddr = rqp->connection->remote_ip;
 	infop->dt_rport = rqp->connection->remote_addr->port;
+#endif
 	infop->dt_method = rqp->method;
 	infop->dt_uri = rqp->unparsed_uri;
 	infop->dt_agent = apr_table_get(rqp->headers_in, "user-agent");
