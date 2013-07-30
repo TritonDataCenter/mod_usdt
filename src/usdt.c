@@ -42,8 +42,14 @@ dtp_request_fill(dthttpd_t *infop, request_rec *rqp)
 	infop->dt_rqid = (uint64_t)(uintptr_t)rqp;
 	infop->dt_laddr = rqp->connection->local_ip;
 	infop->dt_lport = rqp->connection->local_addr->port;
+	/* CSTYLED */
+#if AP_MODULE_MAGIC_AT_LEAST(20111130,0)
+	infop->dt_raddr = rqp->connection->client_ip;
+	infop->dt_rport = rqp->connection->client_addr->port;
+#else
 	infop->dt_raddr = rqp->connection->remote_ip;
 	infop->dt_rport = rqp->connection->remote_addr->port;
+#endif
 	infop->dt_method = rqp->method;
 	infop->dt_uri = rqp->unparsed_uri;
 	infop->dt_agent = apr_table_get(rqp->headers_in, "user-agent");
