@@ -10,7 +10,7 @@ PROVIDER	 = httpd
 # Uncomment for 64-bit build
 #CARCHFLAGS	+= -m64
 CC		 = gcc
-CSTYLE		 = tools/cstyle
+CSTYLE		 = cstyle
 CFLAGS		+= -Wall -Werror -fPIC $(CARCHFLAGS)
 CPPFLAGS	+= -I$(BUILD)
 AP_CPPFLAGS	:= $(shell apxs -q CPPFLAGS) \
